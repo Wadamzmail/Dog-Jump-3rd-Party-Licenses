@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Licenses</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .license { margin-bottom: 30px; }
+    pre { background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>Third-Party Licenses</h1>
+
+  <div class="license" id="libgdx">
+    <h2>LibGDX (Library)</h2>
+    <div class="license-text">Loading...</div>
+  </div>
+
+  <div class="license" id="roboto">
+    <h2>Roboto Font</h2>
+    <div class="license-text">Loading...</div>
+  </div>
+
+  <div class="license" id="jump_sound">
+    <h2>Jump Sound Effect</h2>
+    <div class="license-text">Loading...</div>
+  </div>
+
+  <script>
+    const licenses = {
+      libgdx: 'licenses/libgdx.txt',
+      roboto: 'licenses/roboto.txt',
+      jump_sound: 'licenses/jump_sound.txt'
+    };
+
+    for (const [id, path] of Object.entries(licenses)) {
+      fetch(path)
+        .then(response => response.text())
+        .then(text => {
+          document.querySelector(`#${id} .license-text`).innerHTML = `<pre>${text}</pre>`;
+        })
+        .catch(err => {
+          document.querySelector(`#${id} .license-text`).textContent = "Failed to load license.";
+        });
+    }
+  </script>
+</body>
+</html>
