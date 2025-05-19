@@ -1,49 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Licenses</title>
+  <title>Third-Party Licenses</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .license { margin-bottom: 30px; }
-    pre { background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 0 20px;
+      background: #f9f9f9;
+    }
+
+    header {
+      background-color: #343a40;
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    header h1 {
+      font-size: 36px;
+      margin: 0;
+    }
+
+    .license {
+      background: white;
+      margin: 20px 0;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .license h2 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    pre {
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
   </style>
 </head>
 <body>
-  <h1>Third-Party Licenses</h1>
 
-  <div class="license" id="libgdx">
-    <h2>LibGDX (Library)</h2>
-    <div class="license-text">Loading...</div>
-  </div>
+  <header>
+    <h1>Third-Party Licenses & Attributions</h1>
+  </header>
 
-  <div class="license" id="roboto">
-    <h2>Roboto Font</h2>
-    <div class="license-text">Loading...</div>
-  </div>
-
-  <div class="license" id="jump_sound">
-    <h2>Jump Sound Effect</h2>
-    <div class="license-text">Loading...</div>
+  <div id="licenses-container">
+    <!-- Licenses will be injected here -->
   </div>
 
   <script>
-    const licenses = {
-      libgdx: 'licenses/libgdx.txt',
-      roboto: 'licenses/roboto.txt',
-      jump_sound: 'licenses/jump_sound.txt'
-    };
-
-    for (const [id, path] of Object.entries(licenses)) {
-      fetch(path)
-        .then(response => response.text())
-        .then(text => {
-          document.querySelector(`#${id} .license-text`).innerHTML = `<pre>${text}</pre>`;
-        })
-        .catch(err => {
-          document.querySelector(`#${id} .license-text`).textContent = "Failed to load license.";
-        });
+    function formatTitle(filename) {
+      return filename
+        .replace(/_/g, ' ')        // استبدال "_" بمسافة
+        .replace(/\b\w/g, c => c.toUpperCase()); // أول حرف كبير
     }
+
+    fetch('licenses.json')
+      .then(response => response.json())
+      .then(files => {
+        const container = document.getElementById('licenses-container');
+        files.forEach(file => {
+          const id = file;
+          const title = formatTitle(file);
+
+          const div = document.createElement('div');
+          div.className = 'license';
+          div.innerHTML = `
+            <h2>${title}</h2>
+            <div class="license-text">Loading...</div>
+          `;
+          container.appendChild(div);
+
+          fetch(`licenses/${file}.txt`)
+            .then(res => res.text())
+            .then(text => {
+              div.querySelector('.license-text').innerHTML = `<pre>${text}</pre>`;
+            })
+            .catch(() => {
+              div.querySelector('.license-text').textContent = "License not found.";
+            });
+        });
+      })
+      .catch(err => {
+        document.getElementById('licenses-container').innerHTML = "<p>Failed to load license list.</p>";
+      });
   </script>
+
 </body>
 </html>
